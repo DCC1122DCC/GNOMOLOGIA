@@ -121,8 +121,18 @@ function openDetail(id) {
 function openAdd() { $("quoteForm").reset(); addDialog.showModal(); setTimeout(() => $("quoteText").focus(), 50); }
 function closeSidebar() { $("sidebar").classList.remove("open"); $("scrim").classList.remove("show"); }
 function exportData() {
-  const blob = new Blob([JSON.stringify({ app: "Gnomologia", version: 1, quotes }, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "gnomologia-backup.json"; a.click(); URL.revokeObjectURL(url);
+  const backup = { app: "Gnomologia", version: 1, exportedAt: new Date().toISOString(), quotes };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "gnomologia-backup.json";
+  link.hidden = true;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  // Keep the object URL alive long enough for mobile and desktop browsers to start the download.
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
 document.querySelectorAll(".nav-item[data-view]").forEach(btn => btn.addEventListener("click", () => { $("searchInput").value = ""; setView(btn.dataset.view); }));
@@ -158,14 +168,44 @@ $("detailBack").addEventListener("click", () => detailDialog.close());
 document.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", () => $(btn.dataset.close).close()));
 $("exportButton").addEventListener("click", exportData);
 $("importInput").addEventListener("change", async e => {
-  const file = e.target.files[0]; if (!file) return;
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
   try {
-    const data = JSON.parse(await file.text()); const incoming = Array.isArray(data) ? data : data.quotes;
-    if (!Array.isArray(incoming)) throw new Error("Invalid backup");
-    const clean = incoming.filter(q => q && typeof q.text === "string" && typeof q.person === "string").map(q => ({ id: q.id || uid(), text: q.text, person: q.person, favorite: !!q.favorite, color: COLORS.includes(q.color) ? q.color : "white", createdAt: q.createdAt || new Date().toISOString() }));
-    if (confirm(`Import ${clean.length} quotes? This will add them to your current archive.`)) { quotes = [...clean, ...quotes]; save(); render(); alert("Your quotes have been imported."); }
-  } catch { alert("That file doesn't look like a Gnomologia backup."); }
-  e.target.value = "";
+    const data = JSON.parse(await file.text());
+    const incoming = Array.isArray(data) ? data : data && data.quotes;
+    if (!Array.isArray(incoming)) throw new Error("This file does not contain a quotes list.");
+
+    const existingIds = new Set(quotes.map(q => q.id));
+    const clean = incoming
+      .filter(q => q && typeof q.text === "string" && typeof q.person === "string")
+      .map(q => {
+        const text = q.text.trim().slice(0, 500);
+        const person = q.person.trim().slice(0, 80);
+        let id = typeof q.id === "string" && q.id && !existingIds.has(q.id) ? q.id : uid();
+        existingIds.add(id);
+        return {
+          id, text, person,
+          favorite: !!q.favorite,
+          color: COLORS.includes(q.color) ? q.color : "white",
+          createdAt: typeof q.createdAt === "string" ? q.createdAt : new Date().toISOString()
+        };
+      })
+      .filter(q => q.text && q.person);
+
+    if (!clean.length) throw new Error("No usable quotes were found in that backup.");
+    if (confirm(`Import ${clean.length} ${clean.length === 1 ? "quote" : "quotes"}? They will be added to your current archive.`)) {
+      quotes = [...clean, ...quotes];
+      save();
+      render();
+      alert(`${clean.length} ${clean.length === 1 ? "quote has" : "quotes have"} been imported.`);
+    }
+  } catch (error) {
+    alert(error.message === "No usable quotes were found in that backup."
+      ? error.message
+      : "That file doesn't look like a Gnomologia backup. Please choose a JSON backup exported from Gnomologia.");
+  } finally {
+    e.target.value = "";
+  }
 });
 $("menuButton").addEventListener("click", () => { $("sidebar").classList.add("open"); $("scrim").classList.add("show"); });
 $("scrim").addEventListener("click", closeSidebar);
