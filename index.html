@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17243c">
+  <meta name="description" content="A little archive of things worth keeping.">
+  <title>Gnomologia</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="Gnomologia home">
+        <span class="brand-mark">“ ”</span>
+        <span>Gnomologia</span>
+      </a>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="all"><span class="nav-icon">✳</span> All quotes</button>
+        <button class="nav-item" data-view="people"><span class="nav-icon">♧</span> People</button>
+        <button class="nav-item" data-view="favorites"><span class="nav-icon">♡</span> Favorites</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span> Settings</button>
+        <div class="sidebar-note">A little archive of things worth keeping.</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu icon-button" id="menuButton" aria-label="Open navigation">☰</button>
+        <div class="view-heading">
+          <h1 id="viewTitle">Gnomologia</h1>
+          <p id="viewSubtitle">A little archive of things worth keeping.</p>
+        </div>
+        <div class="top-actions">
+          <label class="search-wrap" aria-label="Search quotes">
+            <span>⌕</span><input id="searchInput" type="search" placeholder="Search" autocomplete="off">
+          </label>
+          <button class="add-button" id="addButton" aria-label="Add a quote" title="Add a quote">+</button>
+        </div>
+      </header>
+
+      <section class="content" id="content">
+        <div class="quote-grid" id="quoteGrid" aria-live="polite"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-mark">“ ”</div>
+          <h2 id="emptyTitle">Nothing here just yet.</h2>
+          <p id="emptyText">Save a line you don't want to forget.</p>
+          <button class="primary-button" id="emptyAdd">Add your first quote</button>
+        </div>
+        <section class="people-view" id="peopleView" hidden></section>
+        <section class="settings-view" id="settingsView" hidden>
+          <div class="settings-card">
+            <h2>Your archive</h2>
+            <p>Your quotes are saved in this browser on this device.</p>
+            <div class="settings-actions">
+              <button class="secondary-button" id="exportButton">Export quotes</button>
+              <label class="secondary-button import-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h2>A note about your archive</h2>
+            <p>This first version is personal and local-first. Your quotes stay in this browser; there are no accounts or social features yet.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+
+  <dialog class="modal" id="addDialog">
+    <form id="quoteForm" method="dialog">
+      <div class="modal-head"><div><span class="eyebrow">ADD TO YOUR ARCHIVE</span><h2>A little something to remember</h2></div><button class="close-button" type="button" data-close="addDialog" aria-label="Close">×</button></div>
+      <label class="field-label" for="quoteText">What did they say?</label>
+      <textarea id="quoteText" rows="4" maxlength="500" placeholder="Write the quote here..." required></textarea>
+      <label class="field-label" for="personName">Who said it?</label>
+      <input id="personName" type="text" maxlength="80" placeholder="A person's name" required>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-close="addDialog">Cancel</button><button class="primary-button" type="submit">Save quote</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal detail-modal" id="detailDialog">
+    <div class="detail-top"><button class="back-button" id="detailBack">←</button><button class="close-button" type="button" data-close="detailDialog" aria-label="Close">×</button></div>
+    <div class="detail-card" id="detailCard">
+      <div class="detail-quote" id="detailQuote"></div>
+      <div class="detail-person" id="detailPerson"></div>
+    </div>
+    <div class="detail-actions">
+      <button class="round-action heart-action" id="favoriteButton" aria-label="Favorite quote" title="Favorite">♡</button>
+      <button class="round-action" id="editButton" aria-label="Edit quote" title="Edit">✎</button>
+      <button class="round-action delete-action" id="deleteButton" aria-label="Delete quote" title="Delete">⌫</button>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="editDialog">
+    <form id="editForm" method="dialog">
+      <div class="modal-head"><div><span class="eyebrow">MAKE A CHANGE</span><h2>Edit this quote</h2></div><button class="close-button" type="button" data-close="editDialog" aria-label="Close">×</button></div>
+      <label class="field-label" for="editQuoteText">The quote</label>
+      <textarea id="editQuoteText" rows="4" maxlength="500" required></textarea>
+      <label class="field-label" for="editPersonName">Who said it?</label>
+      <input id="editPersonName" type="text" maxlength="80" required>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-close="editDialog">Cancel</button><button class="primary-button" type="submit">Save changes</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
