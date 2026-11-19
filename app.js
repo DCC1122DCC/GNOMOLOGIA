@@ -9,7 +9,6 @@ const $ = (id) => document.getElementById(id);
 const grid = $("quoteGrid");
 const empty = $("emptyState");
 const peopleView = $("peopleView");
-const settingsView = $("settingsView");
 const addDialog = $("addDialog");
 const detailDialog = $("detailDialog");
 const editDialog = $("editDialog");
@@ -32,13 +31,11 @@ function displayQuote(text) {
 function setView(view) {
   currentView = view;
   document.querySelectorAll(".nav-item[data-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
-  const titles = { all: "Gnomologia", people: "People", favorites: "Favorites", settings: "Settings" };
+  const titles = { all: "Gnomologia", people: "People", favorites: "Favorites" };
   $("viewTitle").textContent = titles[view] || "Gnomologia";
-  $("viewSubtitle").textContent = view === "all" ? "A little archive of things worth keeping." : "";
-  $("searchInput").hidden = view === "settings";
-  $("quoteGrid").hidden = view === "people" || view === "settings";
+  $("viewSubtitle").textContent = "";
+    $("quoteGrid").hidden = view === "people";
   peopleView.hidden = view !== "people";
-  settingsView.hidden = view !== "settings";
   render();
   closeSidebar();
 }
@@ -51,7 +48,6 @@ function visibleQuotes() {
 }
 function render() {
   if (currentView === "people") { renderPeople(); empty.hidden = true; return; }
-  if (currentView === "settings") { empty.hidden = true; return; }
   const list = visibleQuotes();
   grid.innerHTML = "";
   list.forEach(q => {

@@ -24,13 +24,22 @@
         <span>Gnomologia</span>
       </a>
       <nav class="nav-list" aria-label="Main navigation">
-        <button class="nav-item active" data-view="all"><span class="nav-icon">✳</span> All quotes</button>
+        <button class="nav-item active" data-view="all">
+          <span class="nav-icon all-quotes-icon" aria-hidden="true"><svg viewBox="0 0 18 18" fill="none"><path d="M6.2 4.2H4.8A1.8 1.8 0 0 0 3 6v7.2A1.8 1.8 0 0 0 4.8 15h1.4M11.8 4.2h1.4A1.8 1.8 0 0 1 15 6v7.2a1.8 1.8 0 0 1-1.8 1.8h-1.4M6.5 7.1h5M6.5 10.1h5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg></span> All quotes
+        </button>
         <button class="nav-item" data-view="people"><span class="nav-icon">♧</span> People</button>
         <button class="nav-item" data-view="favorites"><span class="nav-icon">♡</span> Favorites</button>
       </nav>
       <div class="sidebar-bottom">
-        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span> Settings</button>
-        <div class="sidebar-note">A little archive of things worth keeping.</div>
+        <section class="sidebar-archive" aria-label="Archive tools">
+          <h2>Your archive</h2>
+          <p>Your quotes are saved in this browser on this device.</p>
+          <div class="sidebar-archive-actions">
+            <button class="secondary-button" id="exportButton">Export quotes</button>
+            <label class="secondary-button import-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
+          </div>
+          <p class="sidebar-note">This first version is personal and local-first. Your quotes stay in this browser; there are no accounts or social features yet.</p>
+        </section>
       </div>
     </aside>
 
@@ -39,7 +48,7 @@
         <button class="mobile-menu icon-button" id="menuButton" aria-label="Open navigation">☰</button>
         <div class="view-heading">
           <h1 id="viewTitle">Gnomologia</h1>
-          <p id="viewSubtitle">A little archive of things worth keeping.</p>
+          <p id="viewSubtitle"></p>
         </div>
         <div class="top-actions">
           <label class="search-wrap" aria-label="Search quotes">
@@ -58,20 +67,7 @@
           <button class="primary-button" id="emptyAdd">Add your first quote</button>
         </div>
         <section class="people-view" id="peopleView" hidden></section>
-        <section class="settings-view" id="settingsView" hidden>
-          <div class="settings-card">
-            <h2>Your archive</h2>
-            <p>Your quotes are saved in this browser on this device.</p>
-            <div class="settings-actions">
-              <button class="secondary-button" id="exportButton">Export quotes</button>
-              <label class="secondary-button import-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
-            </div>
-          </div>
-          <div class="settings-card">
-            <h2>A note about your archive</h2>
-            <p>This first version is personal and local-first. Your quotes stay in this browser; there are no accounts or social features yet.</p>
-          </div>
-        </section>
+
       </section>
     </main>
   </div>
@@ -80,7 +76,7 @@
 
   <dialog class="modal" id="addDialog">
     <form id="quoteForm" method="dialog">
-      <div class="modal-head"><div><span class="eyebrow">ADD TO YOUR ARCHIVE</span><h2>A little something to remember</h2></div><button class="close-button" type="button" data-close="addDialog" aria-label="Close">×</button></div>
+      <div class="modal-head"><div><h2>Add</h2></div><button class="close-button" type="button" data-close="addDialog" aria-label="Close">×</button></div>
       <label class="field-label" for="quoteText">What did they say?</label>
       <textarea id="quoteText" rows="4" maxlength="500" placeholder="Write the quote here..." required></textarea>
       <label class="field-label" for="personName">Who said it?</label>
